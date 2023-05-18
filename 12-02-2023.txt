@@ -1,0 +1,315 @@
+12/02/2023 tasks
+Question 1:Write a shell script that deletes all lines containing a specified word in one or more files supplied as arguments to it?
+************
+
+#!/bin/bash
+
+echo "enter file name: \c"
+read file
+
+echo "enter word: \c"
+read word
+
+echo "file before removing $word : \c"
+cat $file
+
+grep -v -i $word $file >test
+
+mv test $file
+
+echo "file after removing $word : \c"
+cat $file
+
+o/p:
+---
+root@srinath-VirtualBox:/home/srinath/assignment# ./copyq1.sh
+enter file name: \c
+file1
+enter word: \c
+hello
+file before removing hello : \c
+Hi motivity
+this morning is fine
+happy day
+hello world and nature
+thankyou for you gift
+hello morning
+file after removing hello : \c
+Hi motivity
+this morning is fine
+happy day
+thankyou for you gift
+root@srinath-VirtualBox:/home/srinath/assignment# 
+
+--------------------------------------------------------------------------------------------------------------------------
+Question 2:Write a shell script to list all of the directory files in a directory?
+************
+
+#!/bin/bash 
+
+# Specify the directory to list 
+echo "Enter the directory name to list : "
+read dir
+
+ # Use the 'ls' command to list all the files in the directory 
+
+ls -R $dir
+
+O/P:
+-----
+
+root@srinath-VirtualBox:/home/srinath/assignment# ./copyquestion2.sh 
+Enter the directory name to list : 
+dir1
+dir1:
+dir2
+
+dir1/dir2:
+dir3
+
+dir1/dir2/dir3:
+file1  file2  file3  file4
+_____________________________________________________________________________________________________________________
+
+Question 3:Monitoring Disk Space utilization and Send Email Alert using script?
+--------------
+
+#!/bin/bash
+
+# Set the threshold (in percentage) for disk space utilization
+threshold=90
+
+# Get the current disk space utilization
+utilization=$(df -h | awk '{print $5}' | sed '1d' | awk -F'%' '{print $1}')
+
+# Loop through the utilization and check if it crosses the threshold
+for i in $utilization;
+do
+  if [ $i -ge $threshold ]; then
+    # Send an email alert if the utilization crosses the threshold
+    subject="Disk Space Alert: Utilization above $threshold%"
+    message="The disk space utilization is above $threshold%. Please take necessary actions to free up disk space."
+    echo "$message" | mail -s "$subject" srinathvarma1997@gmail.com 
+  fi
+done
+
+__________________________________________________________________________________________________________________________________
+Question 4:Write a simple script to install any tomcat server?
+--------------
+
+#!/bin/bash
+
+sudo apt-get  update -y
+sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.71/bin/apache-tomcat-9.0.71-windows-x64.zip
+
+if [ $? -eq 0 ]
+then
+echo " ******************* tomact installed sucessfully ****************"
+else
+echo " ----not installed ---------------"
+fi
+root@srinath-VirtualBox:/home/srinath/assignment# 
+
+_______________________________________________________________________________________________________________________________
+Question 5:write a shell script using arithmetic operators for adding, multiplication and subtraction of any two numbers?
+____________
+#!/bin/bash
+ 
+# Take the two numbers as input
+read -p "Enter the first number: " num1
+read -p "Enter the second number: " num2
+ 
+# Perform arithmetic operations
+sum=$((num1 + num2))
+difference=$((num1 - num2))
+product=$((num1 * num2))
+ 
+# Display the results
+echo "The sum of $num1 and $num2 is: $sum"
+echo "The difference of $num1 and $num2 is: $difference"
+echo "The product of $num1 and $num2 is: $product"
+
+
+
+O/P:
+-----
+
+root@srinath-VirtualBox:/home/srinath/assignment# ./copyquestion5.sh
+Enter the first number: 5
+Enter the second number: 2
+The sum of 5 and 2 is: 7
+The difference of 5 and 2 is: 3
+The product of 5 and 2 is: 10
+_____________________________________________________________________________________________________________________________
+
+Question 6:This example script prompts the user to enter a month and outputs the number of days. There are three possible 
+answers: 30 days, 31 days, 28 or 29 days for February.
+-----------
+
+#!/bin/bash  
+
+
+read -p "Enter the name of the month(in full form,e.g January ) : " month
+
+
+case $month in
+
+ 	January|March|May|July|August|October|December)
+
+	days=31
+;;
+	February)
+
+days=28
+;;
+
+April|June|September|November)
+
+days=30
+;;
+
+
+*)
+echo "Invalid entry"
+
+exit 1
+;;
+
+esac
+
+echo $month has $days days
+
+
+o/P:
+-
+
+Enter the name of the month(in full form,e.g January ) : July
+July has 31 days
+_____________________________________________________________________________________________________________________________
+
+Question 7:(How to schedule cronjobs for running any script like backup of logs?)
+---------------
+
+How to Create a CronJob:
+1)	Open the Terminal and Run the following command to open the crontab editor.
+			crontab –e
+
+2)	In this editor create a new line as follow:
+			* * * * * /path/to/script.sh
+
+3)	In the above example, the script will run every minute.
+
+4)	If you want to run the script at a different interval, replace the asterisks(*) with the desired values. 
+
+5)	For example, to run the script on daily mid-night for incremental backup:
+			59 23 * * * echo “Incremental backup” >> /tmp/backup.log
+
+6)	Save the file and exit the editor. The cron job is now set up and will run automatically according to the schedule.
+
+7)	we can view a list of all cron jobs for our user account by running the following command:
+		crontab –l
+
+8)	To remove a cron job, we can use the crontab -e command to open the editor, delete the relevant line, and save the file.
+___________Cat /etc/crontab: system-wide crontab________________________
+______________________________________________________________________________________________________________________________________________
+
+
+Question 9:
+----------------
+
+1)pstree command, we can check the child processes forked by our script
+	pstree -p
+
+2)strace command to trace the Linux system calls in progress 
+	-p to print the process ids
+	-c option to print a summary of the system calls
+	-f option to attach to all its child processes
+_______________________________________________________________________________________________________________________________________________
+
+Question 10:Script for iterations if-else, for, etc.,?
+---------------
+
+elif script:
+*********************
+
+#!/bin/bash
+
+
+echo "enter your age: "
+read age
+
+
+min=18
+max=48
+
+
+if [ $age -le $min ]
+then
+        echo "You are not eligible"
+
+elif [[ ( $age -ge $min && $age -le $max ) ]]
+
+then
+        echo "You are Eligible "
+
+else
+        echo "invalid"
+
+fi
+
+o/p:
+----
+
+root@srinath-VirtualBox:/home/srinath/assignment# ./elif.sh
+enter your age: 
+18
+You are not eligible
+root@srinath-VirtualBox:/home/srinath/assignment# ./elif.sh
+enter your age: 
+32
+You are Eligible 
+==============================================================================================
+if -else script:
+****************
+
+#!/bin/bash
+
+echo "Enter your name: "
+read name
+echo "Enter your password: "
+read -s password
+
+if [[ $name==abcd && $password=="password" ]] ;
+	
+then 
+
+
+	echo "Valid user"
+else
+	echo "invalid user"
+
+fi
+
+
+
+while loop:
+---------------
+
+
+(or)
+
+count=1
+max=10
+
+while [ $count -le $max ]
+do
+        echo $count
+        let count++
+done
+
+
+
+
+
+_____________________________________________________________________________________________________________________________________________________________________-
+
