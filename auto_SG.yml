@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-south-1
+    vpc_id: vpc-0529447a3725ce420
+    vpc_zone_identifier:
+      - subnet-0bd799fe99d70f586
+      - subnet-07b0df3d6fd64eb00
+    ami_id: ami-0d81306eddc614a45
+    instance_type: t2.micro
+    asg_name: Demo-ASG
+    min_size: 1
+    max_size: 1
+    desired_capacity: 1
+
+  tasks:
+    - name: Create launch configuration
+      ec2_lc:
+        name: Demo-LC
+        image_id: "{{ ami_id }}"
+        instance_type: "{{ instance_type }}"
+        key_name: DevOps
+        security_groups:
+          - sg-09a9767b9ce533ac5
+        region: "{{ region }}"
+        user_data: |
+          #!/bin/bash
+          yum update -y
+          amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+          yum install -y httpd mariadb-server
+          systemctl start httpd
+          systemctl enable httpd
+          usermod -a -G apache ec2-user
+          chown -R ec2-user:apache /var/www
+          chmod 2775 /var/www
+          find /var/www -type d -exec chmod 2775 {} \;
+          find /var/www -type f -exec chmod 0664 {} \;
+          yum install -y git
+          sudo git clone https://github.com/sharonraju143/AWS-Project.git /var/www/html
+
+      register: lc
+
+    - name: Create auto scaling group
+      amazon.aws.autoscaling_group:
+        name: Demo-ASG
+        launch_config_name: Demo-LC
+        vpc_zone_identifier: "{{ vpc_zone_identifier }}"
+        min_size: "{{ min_size }}"
+        max_size: "{{ max_size }}"
+        desired_capacity: "{{ desired_capacity }}"
+        tags:
+          - Name: My-web-server
+        region: "{{ region }}"
+
